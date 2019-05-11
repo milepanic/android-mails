@@ -12,14 +12,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.example.projekat.Adapters.EmailsAdapter;
 
 public class EmailsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-//    String[] HEADERS = {"First header", "Second header", "Third"};
-//    String[] TEXTS = {"First mail", "Second mail hello world", "third one"};
-//    String[] DATES = {"3 hours ago", "5 days ago", "6 days ago"};
-//    String[] SENDERS = {"Bob Ross", "John Doe", "Smith"};
+    String[] TEXTS = {"First mail", "Second mail hello world", "third one"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +48,20 @@ public class EmailsActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-//        ListView listView = findViewById(R.id.listView);
+        ListView listView = (ListView) findViewById(R.id.listView);
 
-//        CustomAdapter customAdapter = new CustomAdapter();
-//        listView.setAdapter(customAdapter);
+        EmailsAdapter emailsAdapter = new EmailsAdapter(this);
+        listView.setAdapter(emailsAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent emailIntent = new Intent(getApplicationContext(), EmailActivity.class);
+                emailIntent.putExtra("ITEM_INDEX", position);
+
+                startActivity(emailIntent);
+            }
+        });
     }
 
     public void openCreateEmail(View view) {
@@ -75,19 +87,14 @@ public class EmailsActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -130,7 +137,7 @@ public class EmailsActivity extends AppCompatActivity
 //
 //        @Override
 //        public View getView(int position, View convertView, ViewGroup parent) {
-//            convertView = getLayoutInflater().inflate(R.layout.view_emails, null);
+//            convertView = getLayoutInflater().inflate(R.layout.list_emails, null);
 //
 //            ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
 //            TextView header = convertView.findViewById(R.id.header);
