@@ -7,7 +7,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.projekat.EmailsActivity;
 import com.example.projekat.R;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class EmailsAdapter extends BaseAdapter {
 
@@ -18,8 +27,9 @@ public class EmailsAdapter extends BaseAdapter {
     String[] DATES = {"3 hours ago", "5 days ago", "6 days ago"};
     String[] SENDERS = {"Bob Ross", "John Doe", "Smith"};
 
-    public EmailsAdapter(Context context) {
+    public EmailsAdapter(Context context, String data) {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        System.out.println("Resss " + data);
     }
 
     @Override
@@ -45,6 +55,8 @@ public class EmailsAdapter extends BaseAdapter {
         TextView header = (TextView) v.findViewById(R.id.header);
         TextView message = (TextView) v.findViewById(R.id.message);
         TextView date = (TextView) v.findViewById(R.id.date);
+
+
 
 //        imageView.setImageResource(SENDERS[position]);
         header.setText(HEADERS[position]);

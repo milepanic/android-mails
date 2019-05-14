@@ -13,7 +13,14 @@ public class Message {
     private String content;
 
     public Message() {
-
+//        id = 0;
+//        from = null;
+//        to = null;
+//        cc = null;
+//        bcc = null;
+//        dateTime = null;
+//        subject = null;
+//        content = null;
     }
 
     public Message(int id, String from, String to, String cc, String bcc, Date dateTime, String subject, String content) {

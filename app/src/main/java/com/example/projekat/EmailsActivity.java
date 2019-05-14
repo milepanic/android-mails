@@ -13,15 +13,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.backendless.Backendless;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
 import com.example.projekat.Adapters.EmailsAdapter;
+import com.example.projekat.Models.Message;
+
+import java.io.IOException;
+import java.util.Date;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class EmailsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    String[] TEXTS = {"First mail", "Second mail hello world", "third one"};
+    String[] HEADERS = {"First header", "Second header", "Third"};
+
+    String responseData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +62,12 @@ public class EmailsActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+//        getData();
+//        System.out.println("Resss " + responseData);
+
         ListView listView = (ListView) findViewById(R.id.listView);
 
-        EmailsAdapter emailsAdapter = new EmailsAdapter(this);
+        EmailsAdapter emailsAdapter = new EmailsAdapter(this, getData());
         listView.setAdapter(emailsAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -62,6 +79,55 @@ public class EmailsActivity extends AppCompatActivity
                 startActivity(emailIntent);
             }
         });
+
+        Message message = new Message();
+        message.setId(1);
+        message.setBcc("bcc");
+        message.setCc("cc");
+        message.setSubject("NASLOV");
+        message.setContent("poruka tijelo body");
+        message.setFrom("Korisnik 2");
+        message.setTo("Korisnik 5");
+        message.setDateTime(new Date());
+
+        Backendless.Data.of(Message.class).save(message, new AsyncCallback<Message>() {
+            @Override
+            public void handleResponse(Message response) {
+
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+
+            }
+        });
+
+    }
+
+    private String getData() {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+//                .header("Authorization", "token abcd")
+                .url("https://api.github.com/users/codepath")
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (! response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
+
+            }
+        });
+
+        return null;
     }
 
     public void openCreateEmail(View view) {
@@ -117,42 +183,6 @@ public class EmailsActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-//    class CustomAdapter extends BaseAdapter {
-//
-//        @Override
-//        public int getCount() {
-//            return HEADERS.length;
-//        }
-//
-//        @Override
-//        public Object getItem(int position) {
-//            return null;
-//        }
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return 0;
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//            convertView = getLayoutInflater().inflate(R.layout.list_emails, null);
-//
-//            ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
-//            TextView header = convertView.findViewById(R.id.header);
-//            TextView message = convertView.findViewById(R.id.message);
-//            TextView date = convertView.findViewById(R.id.date);
-//
-//            imageView.setImageResource(SENDERS[position]);
-//            header.setText(HEADERS[position]);
-//            message.setText(TEXTS[position]);
-//            date.setText(DATES[position]);
-//            header.setText(HEADERS[i]);
-//
-//            return convertView;
-//        }
-//    }
 }
 
 
