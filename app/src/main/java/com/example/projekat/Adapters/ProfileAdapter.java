@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.projekat.MyApplication;
 import com.example.projekat.R;
 
 public class ProfileAdapter extends BaseAdapter {
@@ -38,8 +39,8 @@ public class ProfileAdapter extends BaseAdapter {
         TextView name = (TextView) v.findViewById(R.id.name);
         TextView email = (TextView) v.findViewById(R.id.email);
 
-        name.setText("Mile Panic");
-        email.setText("admin@admin.com");
+        name.setText((String) MyApplication.auth.getProperty("username"));
+        email.setText(MyApplication.auth.getEmail());
 
         return v;
     }

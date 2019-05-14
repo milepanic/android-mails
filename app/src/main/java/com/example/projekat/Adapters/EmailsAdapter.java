@@ -7,62 +7,53 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.projekat.EmailsActivity;
+import com.example.projekat.Models.Message;
 import com.example.projekat.R;
 
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.util.List;
 
 public class EmailsAdapter extends BaseAdapter {
 
-    LayoutInflater mInflater;
-    int[] ID = {1, 2, 3};
-    String[] HEADERS = {"First header", "Second header", "Third"};
-    String[] TEXTS = {"First mail", "Second mail hello world", "third one"};
-    String[] DATES = {"3 hours ago", "5 days ago", "6 days ago"};
-    String[] SENDERS = {"Bob Ross", "John Doe", "Smith"};
+    private List<Message> messages;
+    private Context context;
 
-    public EmailsAdapter(Context context, String data) {
-        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        System.out.println("Resss " + data);
+    public EmailsAdapter(Context context, List<Message> messages) {
+        this.context = context;
+        this.messages = messages;
     }
 
     @Override
     public int getCount() {
-        return ID.length;
+        return messages.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return ID[position];
+        return messages.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return ID[position];
+        return messages.get(position).getId();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View v = mInflater.inflate(R.layout.list_emails, null);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+//        View v = mInflater.inflate(R.layout.list_emails, null);
+        convertView = inflater.inflate(R.layout.list_emails, null);
 
 //        ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
-        TextView header = (TextView) v.findViewById(R.id.header);
-        TextView message = (TextView) v.findViewById(R.id.message);
-        TextView date = (TextView) v.findViewById(R.id.date);
-
-
+        TextView header = (TextView) convertView.findViewById(R.id.subject);
+        TextView message = (TextView) convertView.findViewById(R.id.message);
+        TextView date = (TextView) convertView.findViewById(R.id.date);
 
 //        imageView.setImageResource(SENDERS[position]);
-        header.setText(HEADERS[position]);
-        message.setText(TEXTS[position]);
-        date.setText(DATES[position]);
+        header.setText(messages.get(position).getSubject());
+        message.setText(messages.get(position).getContent());
+        date.setText(messages.get(position).getDateTime().toString());
 
-        return v;
+        return convertView;
     }
 }

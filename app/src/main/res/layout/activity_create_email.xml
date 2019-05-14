@@ -20,14 +20,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#00E9D6D6"
             app:srcCompat="@android:drawable/ic_delete" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/btnReply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@android:drawable/ic_menu_send" />
@@ -35,77 +35,79 @@
     </android.support.v7.widget.Toolbar>
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/etTo"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
+        android:hint="To"
         android:inputType="textPersonName"
-        android:text="To"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <EditText
-        android:id="@+id/editText7"
+        android:id="@+id/etSubject"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
+        android:hint="Subject"
         android:inputType="textPersonName"
-        android:text="Title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText3" />
+        app:layout_constraintTop_toBottomOf="@+id/etTo" />
 
     <EditText
-        android:id="@+id/editText8"
+        android:id="@+id/etMessage"
+        style="@style/Base.Widget.MaterialComponents.TextInputEditText"
         android:layout_width="0dp"
-        android:layout_height="121dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Message"
+        android:hint="Message"
+        android:inputType="textMultiLine"
+        android:singleLine="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText7" />
+        app:layout_constraintTop_toBottomOf="@+id/etSubject" />
 
     <EditText
-        android:id="@+id/editText9"
+        android:id="@+id/etBCC"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
+        android:hint="BCC"
         android:inputType="textPersonName"
-        android:text="BCC"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText10" />
+        app:layout_constraintTop_toBottomOf="@+id/etCC" />
 
     <EditText
-        android:id="@+id/editText10"
+        android:id="@+id/etCC"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
+        android:hint="CC"
         android:inputType="textPersonName"
-        android:text="CC"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText8" />
+        app:layout_constraintTop_toBottomOf="@+id/etMessage" />
 
 </android.support.constraint.ConstraintLayout>

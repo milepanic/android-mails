@@ -14,15 +14,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.DataQueryBuilder;
 import com.example.projekat.Adapters.EmailsAdapter;
 import com.example.projekat.Models.Message;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,9 +36,8 @@ import okhttp3.Response;
 public class EmailsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    String[] HEADERS = {"First header", "Second header", "Third"};
-
-    String responseData;
+    ListView listView;
+    EmailsAdapter emailsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +64,9 @@ public class EmailsActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-//        getData();
-//        System.out.println("Resss " + responseData);
+        listView = findViewById(R.id.listView);
 
-        ListView listView = (ListView) findViewById(R.id.listView);
-
-        EmailsAdapter emailsAdapter = new EmailsAdapter(this, getData());
-        listView.setAdapter(emailsAdapter);
+        displayEmails();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -79,55 +77,31 @@ public class EmailsActivity extends AppCompatActivity
                 startActivity(emailIntent);
             }
         });
+    }
 
-        Message message = new Message();
-        message.setId(1);
-        message.setBcc("bcc");
-        message.setCc("cc");
-        message.setSubject("NASLOV");
-        message.setContent("poruka tijelo body");
-        message.setFrom("Korisnik 2");
-        message.setTo("Korisnik 5");
-        message.setDateTime(new Date());
+    public void displayEmails() {
+        String whereClause = "to = '" + MyApplication.auth.getEmail() + "'";
 
-        Backendless.Data.of(Message.class).save(message, new AsyncCallback<Message>() {
+        DataQueryBuilder query = DataQueryBuilder.create();
+//        query.setWhereClause(whereClause);
+
+        Backendless.Persistence.of(Message.class).find(query, new AsyncCallback<List<Message>>() {
             @Override
-            public void handleResponse(Message response) {
+            public void handleResponse(List<Message> response) {
+                MyApplication.messages = response;
 
+                emailsAdapter = new EmailsAdapter(EmailsActivity.this, MyApplication.messages);
+                listView.setAdapter(emailsAdapter);
             }
 
             @Override
             public void handleFault(BackendlessFault fault) {
-
+                Toast.makeText(
+                        EmailsActivity.this,
+                        "Error: " + fault.getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
-
-    }
-
-    private String getData() {
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
-//                .header("Authorization", "token abcd")
-                .url("https://api.github.com/users/codepath")
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (! response.isSuccessful()) {
-                    throw new IOException("Unexpected code " + response);
-                }
-
-            }
-        });
-
-        return null;
     }
 
     public void openCreateEmail(View view) {
@@ -139,6 +113,7 @@ public class EmailsActivity extends AppCompatActivity
     public void openProfile() {
         Intent profileIntent = new Intent(this, ProfileActivity.class);
         startActivity(profileIntent);
+        finish();
     }
 
     @Override

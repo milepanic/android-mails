@@ -11,7 +11,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.backendless.Backendless;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
 import com.example.projekat.Adapters.ProfileAdapter;
 
 public class ProfileActivity extends AppCompatActivity
@@ -45,11 +49,33 @@ public class ProfileActivity extends AppCompatActivity
     public void openEmails() {
         Intent emailsIntent = new Intent(this, EmailsActivity.class);
         startActivity(emailsIntent);
+        finish();
     }
 
-    public void openLogin() {
-        Intent loginIntent = new Intent(this, LoginActivity.class);
-        startActivity(loginIntent);
+    public void logout() {
+        Backendless.UserService.logout(new AsyncCallback<Void>() {
+            @Override
+            public void handleResponse(Void response) {
+                Toast.makeText(
+                        ProfileActivity.this,
+                        "Successfully logged out!",
+                        Toast.LENGTH_SHORT).show();
+
+                Intent loginIntent = new Intent(ProfileActivity.this, LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Toast.makeText(
+                        ProfileActivity.this,
+                        "Error: " + fault.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     @Override
@@ -73,7 +99,7 @@ public class ProfileActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
-            this.openLogin();
+            this.logout();
         }
 
         return super.onOptionsItemSelected(item);

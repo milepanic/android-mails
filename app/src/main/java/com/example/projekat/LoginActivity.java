@@ -12,6 +12,7 @@ import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.local.UserIdStorageFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -22,6 +23,41 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Backendless.UserService.isValidLogin(new AsyncCallback<Boolean>() {
+            @Override
+            public void handleResponse(Boolean response) {
+                String userObjectId = UserIdStorageFactory.instance().getStorage().get();
+
+                Backendless.Data.of(BackendlessUser.class).findById(userObjectId, new AsyncCallback<BackendlessUser>() {
+                    @Override
+                    public void handleResponse(BackendlessUser response) {
+                        MyApplication.auth = response;
+
+                        Intent emailsIntent = new Intent(LoginActivity.this, EmailsActivity.class);
+
+                        startActivity(emailsIntent);
+                        finish();
+                    }
+
+                    @Override
+                    public void handleFault(BackendlessFault fault) {
+                        Toast.makeText(
+                                LoginActivity.this,
+                                "Error: " + fault.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Toast.makeText(
+                        LoginActivity.this,
+                        "Error: " + fault.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
@@ -45,6 +81,8 @@ public class LoginActivity extends AppCompatActivity {
                 Backendless.UserService.login(emailText, passwordText, new AsyncCallback<BackendlessUser>() {
                     @Override
                     public void handleResponse(BackendlessUser response) {
+                        MyApplication.auth = response;
+
                         Toast.makeText(
                                 LoginActivity.this,
                                 "Successfully logged in",
@@ -58,7 +96,10 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void handleFault(BackendlessFault fault) {
-                        Toast.makeText(LoginActivity.this, "Error: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(
+                                LoginActivity.this,
+                                "Error: " + fault.getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 }, true);
 
