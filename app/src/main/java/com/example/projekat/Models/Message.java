@@ -11,16 +11,10 @@ public class Message {
     private Date dateTime;
     private String subject;
     private String content;
+    private String objectId;
 
     public Message() {
-//        id = 0;
-//        from = null;
-//        to = null;
-//        cc = null;
-//        bcc = null;
-//        dateTime = null;
-//        subject = null;
-//        content = null;
+
     }
 
     public Message(int id, String from, String to, String cc, String bcc, Date dateTime, String subject, String content) {
@@ -96,5 +90,13 @@ public class Message {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 }

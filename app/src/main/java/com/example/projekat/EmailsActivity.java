@@ -1,6 +1,7 @@
 package com.example.projekat;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,15 +24,7 @@ import com.backendless.persistence.DataQueryBuilder;
 import com.example.projekat.Adapters.EmailsAdapter;
 import com.example.projekat.Models.Message;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class EmailsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -74,16 +67,27 @@ public class EmailsActivity extends AppCompatActivity
                 Intent emailIntent = new Intent(getApplicationContext(), EmailActivity.class);
                 emailIntent.putExtra("ITEM_INDEX", position);
 
-                startActivity(emailIntent);
+                startActivityForResult(emailIntent, 1);
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1) {
+            emailsAdapter.notifyDataSetChanged();
+        }
+    }
+
     public void displayEmails() {
-        String whereClause = "to = '" + MyApplication.auth.getEmail() + "'";
+        String mail = MyApplication.auth.getEmail();
+        String whereClause = "to = '" + mail + "' OR cc = '" + mail + "' OR bcc = '" + mail + "'";
 
         DataQueryBuilder query = DataQueryBuilder.create();
-//        query.setWhereClause(whereClause);
+        query.setWhereClause(whereClause);
+        query.setSortBy("dateTime"); // dodati settings za DESC ili ASC
 
         Backendless.Persistence.of(Message.class).find(query, new AsyncCallback<List<Message>>() {
             @Override
