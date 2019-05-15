@@ -1,0 +1,16 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:id="@+id/order_by"
+        android:defaultValue="true"
+        android:key="switch_mails_order"
+        android:title="Order mails by latest" />
+
+    <EditTextPreference
+        android:id="@+id/refresh_rate"
+        android:defaultValue="1"
+        android:key="edit_mails_refresh"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Time to refresh mails" />
+</PreferenceScreen>

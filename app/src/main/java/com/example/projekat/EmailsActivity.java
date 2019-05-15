@@ -1,6 +1,8 @@
 package com.example.projekat;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -28,6 +30,8 @@ import java.util.List;
 
 public class EmailsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    SharedPreferences prefs;
 
     ListView listView;
     EmailsAdapter emailsAdapter;
@@ -57,6 +61,8 @@ public class EmailsActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        prefs = getSharedPreferences(MyApplication.PREFERENCES, MODE_PRIVATE);
+
         listView = findViewById(R.id.listView);
 
         displayEmails();
@@ -70,6 +76,8 @@ public class EmailsActivity extends AppCompatActivity
                 startActivityForResult(emailIntent, 1);
             }
         });
+
+        autoRefreshEmails();
     }
 
     @Override
@@ -78,6 +86,10 @@ public class EmailsActivity extends AppCompatActivity
 
         if (requestCode == 1) {
             emailsAdapter.notifyDataSetChanged();
+        } else if (requestCode == 2) {
+            emailsAdapter.notifyDataSetChanged();
+            displayEmails();
+            autoRefreshEmails();
         }
     }
 
@@ -85,9 +97,16 @@ public class EmailsActivity extends AppCompatActivity
         String mail = MyApplication.auth.getEmail();
         String whereClause = "to = '" + mail + "' OR cc = '" + mail + "' OR bcc = '" + mail + "'";
 
+        String sortByClause = "dateTime";
+
+        boolean orderByDesc = prefs.getBoolean("orderByDesc", false);
+        if (orderByDesc) {
+            sortByClause += " DESC";
+        }
+
         DataQueryBuilder query = DataQueryBuilder.create();
         query.setWhereClause(whereClause);
-        query.setSortBy("dateTime"); // dodati settings za DESC ili ASC
+        query.setSortBy(sortByClause);
 
         Backendless.Persistence.of(Message.class).find(query, new AsyncCallback<List<Message>>() {
             @Override
@@ -108,6 +127,22 @@ public class EmailsActivity extends AppCompatActivity
         });
     }
 
+    public void autoRefreshEmails() {
+        final int refreshRate = prefs.getInt("refreshRate", 10000);
+        final Handler handler = new Handler();
+
+        Runnable refresh = new Runnable() {
+            @Override
+            public void run() {
+                displayEmails();
+
+                handler.postDelayed(this, refreshRate);
+            }
+        };
+
+        handler.postDelayed(refresh, refreshRate);
+    }
+
     public void openCreateEmail(View view) {
         Intent createEmailIntent = new Intent(this, CreateEmailActivity.class);
 
@@ -118,6 +153,12 @@ public class EmailsActivity extends AppCompatActivity
         Intent profileIntent = new Intent(this, ProfileActivity.class);
         startActivity(profileIntent);
         finish();
+    }
+
+    public void openSettings() {
+        Intent settingsIntent = new Intent(this, SettingsActivity.class);
+
+        startActivityForResult(settingsIntent, 2);
     }
 
     @Override
@@ -141,7 +182,7 @@ public class EmailsActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            return true;
+            this.openSettings();
         }
 
         return super.onOptionsItemSelected(item);

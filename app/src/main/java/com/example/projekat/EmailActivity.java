@@ -18,8 +18,8 @@ import com.example.projekat.Models.Message;
 
 public class EmailActivity extends AppCompatActivity {
 
-    Message message;
     int index;
+    Message message;
     TextView subject, text, from, date;
     ImageView btnCancel, btnReply, btnReplyAll, btnForward;
 

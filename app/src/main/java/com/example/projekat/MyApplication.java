@@ -14,6 +14,8 @@ public class MyApplication extends Application {
     public static final String API_KEY = "0718553B-5E37-5652-FF41-1A57C6191C00";
     public static final String SERVER_URL = "https://api.backendless.com";
 
+    public static final String PREFERENCES = "com.example.projekat.Preferences";
+
     public static BackendlessUser auth;
     public static List<Message> messages;
 
