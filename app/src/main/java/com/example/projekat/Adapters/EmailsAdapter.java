@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.example.projekat.Models.Message;
 import com.example.projekat.R;
 
+import java.text.DateFormat;
 import java.util.List;
 
 public class EmailsAdapter extends BaseAdapter {
@@ -52,7 +53,7 @@ public class EmailsAdapter extends BaseAdapter {
 //        imageView.setImageResource(SENDERS[position]);
         header.setText(messages.get(position).getSubject());
         message.setText(messages.get(position).getContent());
-        date.setText(messages.get(position).getDateTime().toString());
+        date.setText(DateFormat.getDateTimeInstance().format(messages.get(position).getDateTime()));
 
         return convertView;
     }

@@ -6,7 +6,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,12 +18,17 @@ import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.example.projekat.Models.Message;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 public class EmailActivity extends AppCompatActivity {
 
     int index;
     Message message;
     TextView subject, text, from, date;
     ImageView btnCancel, btnReply, btnReplyAll, btnForward;
+
+    String inputText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +59,7 @@ public class EmailActivity extends AppCompatActivity {
             subject.setText(message.getSubject());
             text.setText(message.getContent());
             from.setText(message.getFrom());
-            date.setText(message.getDateTime().toString());
+            date.setText(DateFormat.getDateTimeInstance().format(message.getDateTime()));
         }
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -102,24 +109,173 @@ public class EmailActivity extends AppCompatActivity {
         btnReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                replyTo();
             }
         });
 
         btnReplyAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                replyAll();
             }
         });
 
         btnForward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                forwardMail();
+            }
+        });
+    }
 
+    public void replyTo() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Reply:");
+
+        final EditText input = new EditText(this);
+
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                inputText = input.getText().toString();
+
+                Message replyMessage = new Message();
+                replyMessage.setSubject(message.getSubject());
+                replyMessage.setContent(inputText);
+                replyMessage.setFrom(MyApplication.auth.getEmail());
+                replyMessage.setTo(message.getFrom());
+                replyMessage.setDateTime(new Date());
+
+                Backendless.Persistence.save(replyMessage, new AsyncCallback<Message>() {
+                    @Override
+                    public void handleResponse(Message response) {
+                        Toast.makeText(
+                                EmailActivity.this,
+                                "Message replied successfully!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void handleFault(BackendlessFault fault) {
+                        Toast.makeText(
+                                EmailActivity.this,
+                                "Error: " + fault.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
             }
         });
 
+        builder.show();
+    }
 
+    public void replyAll() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Reply to all:");
+
+        final EditText input = new EditText(this);
+
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                inputText = input.getText().toString();
+
+                Message replyAllMessage = new Message();
+                replyAllMessage.setSubject(message.getSubject());
+                replyAllMessage.setContent(inputText);
+                replyAllMessage.setFrom(MyApplication.auth.getEmail());
+                replyAllMessage.setTo(message.getFrom());
+                replyAllMessage.setCc(message.getCc());
+                replyAllMessage.setDateTime(new Date());
+
+                Backendless.Persistence.save(replyAllMessage, new AsyncCallback<Message>() {
+                    @Override
+                    public void handleResponse(Message response) {
+                        Toast.makeText(
+                                EmailActivity.this,
+                                "Message replied successfully!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void handleFault(BackendlessFault fault) {
+                        Toast.makeText(
+                                EmailActivity.this,
+                                "Error: " + fault.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    public void forwardMail() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Forward mail to:");
+
+        final EditText input = new EditText(this);
+
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                inputText = input.getText().toString();
+
+                Message forwardMessage = new Message();
+                forwardMessage.setSubject(message.getSubject());
+                forwardMessage.setContent(message.getContent());
+                forwardMessage.setFrom(MyApplication.auth.getEmail());
+                forwardMessage.setTo(inputText);
+                forwardMessage.setDateTime(new Date());
+
+                Backendless.Persistence.save(forwardMessage, new AsyncCallback<Message>() {
+                    @Override
+                    public void handleResponse(Message response) {
+                        Toast.makeText(
+                                EmailActivity.this,
+                                "Message forwarded successfully!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void handleFault(BackendlessFault fault) {
+                        Toast.makeText(
+                                EmailActivity.this,
+                                "Error: " + fault.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 }
