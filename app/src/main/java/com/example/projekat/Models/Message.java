@@ -12,20 +12,10 @@ public class Message {
     private String subject;
     private String content;
     private String objectId;
+    private String filename;
 
     public Message() {
 
-    }
-
-    public Message(int id, String from, String to, String cc, String bcc, Date dateTime, String subject, String content) {
-        this.id = id;
-        this.from = from;
-        this.to = to;
-        this.cc = cc;
-        this.bcc = bcc;
-        this.dateTime = dateTime;
-        this.subject = subject;
-        this.content = content;
     }
 
     public int getId() {
@@ -98,5 +88,13 @@ public class Message {
 
     public void setObjectId(String objectId) {
         this.objectId = objectId;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

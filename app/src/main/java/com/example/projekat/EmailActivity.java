@@ -26,7 +26,7 @@ public class EmailActivity extends AppCompatActivity {
     int index;
     Message message;
     TextView subject, text, from, date;
-    ImageView btnCancel, btnReply, btnReplyAll, btnForward;
+    ImageView btnCancel, btnReply, btnReplyAll, btnForward, imageView;
 
     String inputText;
 
@@ -44,6 +44,7 @@ public class EmailActivity extends AppCompatActivity {
         text = findViewById(R.id.text);
         from = findViewById(R.id.from);
         date = findViewById(R.id.date);
+        imageView = findViewById(R.id.imageView);
 
         btnCancel = findViewById(R.id.btnCancel);
         btnReply = findViewById(R.id.btnReply);
@@ -60,6 +61,10 @@ public class EmailActivity extends AppCompatActivity {
             text.setText(message.getContent());
             from.setText(message.getFrom());
             date.setText(DateFormat.getDateTimeInstance().format(message.getDateTime()));
+            if (message.getFilename() != "") {
+                imageView.setVisibility(View.VISIBLE);
+//                download slike
+            }
         }
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
