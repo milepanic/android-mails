@@ -2,6 +2,9 @@ package com.example.projekat;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +20,13 @@ import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.example.projekat.Models.Message;
+import com.example.projekat.Tasks.DownloadFileTask;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -61,9 +70,8 @@ public class EmailActivity extends AppCompatActivity {
             text.setText(message.getContent());
             from.setText(message.getFrom());
             date.setText(DateFormat.getDateTimeInstance().format(message.getDateTime()));
-            if (message.getFilename() != "") {
-                imageView.setVisibility(View.VISIBLE);
-//                download slike
+            if (message.getFilename() != null) {
+                getImage(message.getFilename());
             }
         }
 
@@ -283,4 +291,20 @@ public class EmailActivity extends AppCompatActivity {
 
         builder.show();
     }
+
+    public void getImage(String filename) {
+        try {
+            URL url = new URL(
+                            "https://backendlessappcontent.com/" + MyApplication.APPLICATION_ID + "/" +
+                                    MyApplication.API_KEY + "/files/uploadedImages/" + filename
+            );
+
+            DownloadFileTask task = new DownloadFileTask(imageView);
+            task.execute(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
+
