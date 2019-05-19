@@ -26,11 +26,11 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="Login Activity" />
+            android:label="Login" />
 
         <activity
             android:name=".EmailsActivity"
-            android:label="Emails Activity"
+            android:label="My Emails"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".EmailActivity"
@@ -40,19 +40,19 @@
 
         <activity
             android:name=".ProfileActivity"
-            android:label="Profile Activity"
+            android:label="My Profile"
             android:parentActivityName=".EmailsActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name=".CreateEmailActivity"
-            android:label="Create Email Activity"
+            android:label="New Email"
             android:parentActivityName=".EmailsActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name=".SettingsActivity"
-            android:label="Settings Activity"
+            android:label="Settings"
             android:parentActivityName=".EmailsActivity"/>
     </application>
 

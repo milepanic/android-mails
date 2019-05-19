@@ -8,7 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +23,6 @@ import com.backendless.files.BackendlessFile;
 import com.example.projekat.Models.Attachment;
 import com.example.projekat.Models.Message;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,7 +30,7 @@ import java.util.Date;
 public class CreateEmailActivity extends AppCompatActivity {
 
     EditText etSubject, etTo, etMessage, etCC, etBCC;
-    ImageView btnSend, btnCancel, imageAttachment;
+    ImageView imageAttachment;
     Button btnCamera, btnGallery;
     Bitmap bitmap;
 
@@ -50,75 +50,27 @@ public class CreateEmailActivity extends AppCompatActivity {
         etCC = findViewById(R.id.etCC);
         etBCC = findViewById(R.id.etBCC);
 
-        btnSend = findViewById(R.id.btnReply);
-        btnCancel = findViewById(R.id.btnCancel);
+//        btnSend = findViewById(R.id.btnReply);
+//        btnCancel = findViewById(R.id.btnCancel);
 
         imageAttachment = findViewById(R.id.imageAttachment);
         btnCamera = findViewById(R.id.btnCamera);
         btnGallery = findViewById(R.id.btnGallery);
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent emailsIntent = new Intent(CreateEmailActivity.this, EmailsActivity.class);
-
-                startActivity(emailsIntent);
-                finish();
-            }
-        });
-
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (imageAttachment.getVisibility() == View.VISIBLE) {
-                    String timestamp = new SimpleDateFormat("yyyyMMdd__HHmmss").format(new Date());
-                    final String fileName = "PNG_" + timestamp + ".png";
-
-                    final Attachment attachment = new Attachment();
-                    attachment.setType("image");
-                    attachment.setName(fileName);
-                    attachment.setData("uploadedImages/" + fileName);
-
-                    Backendless.Files.Android.upload(
-                            bitmap,
-                            Bitmap.CompressFormat.PNG,
-                            100,
-                            fileName,
-                            "uploadedImages",
-                            new AsyncCallback<BackendlessFile>() {
-                                @Override
-                                public void handleResponse(BackendlessFile response) {
-                                    Backendless.Persistence.save(attachment, new AsyncCallback<Attachment>() {
-                                        @Override
-                                        public void handleResponse(Attachment response) {
-                                            uploadEmail(fileName);
-                                        }
-
-                                        @Override
-                                        public void handleFault(BackendlessFault fault) {
-                                            Toast.makeText(
-                                                    CreateEmailActivity.this,
-                                                    "Error: " + fault.getMessage(),
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-
-                                }
-
-                                @Override
-                                public void handleFault(BackendlessFault fault) {
-                                    Toast.makeText(
-                                            CreateEmailActivity.this,
-                                            "Error: " + fault.getMessage(),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                } else {
-                    uploadEmail("");
-                }
-
-            }
-        });
+//        btnCancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+//
+//        btnSend.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//
+//            }
+//        });
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,6 +116,62 @@ public class CreateEmailActivity extends AppCompatActivity {
         }
     }
 
+    public void cancel() {
+        Intent emailsIntent = new Intent(CreateEmailActivity.this, EmailsActivity.class);
+
+        startActivity(emailsIntent);
+        finish();
+    }
+
+    public void sendEmail() {
+        if (imageAttachment.getVisibility() == View.VISIBLE) {
+            String timestamp = new SimpleDateFormat("yyyyMMdd__HHmmss").format(new Date());
+            final String fileName = "PNG_" + timestamp + ".png";
+
+            final Attachment attachment = new Attachment();
+            attachment.setType("image");
+            attachment.setName(fileName);
+            attachment.setData("uploadedImages/" + fileName);
+
+            Backendless.Files.Android.upload(
+                    bitmap,
+                    Bitmap.CompressFormat.PNG,
+                    100,
+                    fileName,
+                    "uploadedImages",
+                    new AsyncCallback<BackendlessFile>() {
+                        @Override
+                        public void handleResponse(BackendlessFile response) {
+                            Backendless.Persistence.save(attachment, new AsyncCallback<Attachment>() {
+                                @Override
+                                public void handleResponse(Attachment response) {
+                                    uploadEmail(fileName);
+                                }
+
+                                @Override
+                                public void handleFault(BackendlessFault fault) {
+                                    Toast.makeText(
+                                            CreateEmailActivity.this,
+                                            "Error: " + fault.getMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void handleFault(BackendlessFault fault) {
+                            Toast.makeText(
+                                    CreateEmailActivity.this,
+                                    "Error: " + fault.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            uploadEmail("");
+        }
+    }
+
     public void uploadEmail(String filename) {
         String subject = etSubject.getText().toString();
         String to = etTo.getText().toString();
@@ -202,5 +210,24 @@ public class CreateEmailActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.create_email, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_send) {
+            sendEmail();
+        } else if (id == R.id.action_delete) {
+            cancel();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

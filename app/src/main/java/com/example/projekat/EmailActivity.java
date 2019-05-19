@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -35,7 +37,7 @@ public class EmailActivity extends AppCompatActivity {
     int index;
     Message message;
     TextView subject, text, from, date;
-    ImageView btnCancel, btnReply, btnReplyAll, btnForward, imageView;
+    ImageView imageView;
 
     String inputText;
 
@@ -55,11 +57,6 @@ public class EmailActivity extends AppCompatActivity {
         date = findViewById(R.id.date);
         imageView = findViewById(R.id.imageView);
 
-        btnCancel = findViewById(R.id.btnCancel);
-        btnReply = findViewById(R.id.btnReply);
-        btnReplyAll = findViewById(R.id.btnReplyAll);
-        btnForward = findViewById(R.id.btnForward);
-
         Intent intent = getIntent();
         index = intent.getIntExtra("ITEM_INDEX", -1);
 
@@ -74,71 +71,6 @@ public class EmailActivity extends AppCompatActivity {
                 getImage(message.getFilename());
             }
         }
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final AlertDialog.Builder dialog = new AlertDialog.Builder(EmailActivity.this);
-                dialog.setMessage("Are you sure you want to delete this email?");
-
-                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Backendless.Persistence.of(Message.class).remove(message, new AsyncCallback<Long>() {
-                            @Override
-                            public void handleResponse(Long response) {
-                                MyApplication.messages.remove(index);
-
-                                Toast.makeText(
-                                        EmailActivity.this,
-                                        "Message deleted",
-                                        Toast.LENGTH_SHORT).show();
-
-                                finish();
-                            }
-
-                            @Override
-                            public void handleFault(BackendlessFault fault) {
-                                Toast.makeText(
-                                        EmailActivity.this,
-                                        "Error: " + fault.getMessage(),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
-
-                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-                dialog.show();
-            }
-        });
-
-        btnReply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replyTo();
-            }
-        });
-
-        btnReplyAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replyAll();
-            }
-        });
-
-        btnForward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                forwardMail();
-            }
-        });
     }
 
     public void replyTo() {
@@ -292,6 +224,47 @@ public class EmailActivity extends AppCompatActivity {
         builder.show();
     }
 
+    public void deleteMail() {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(EmailActivity.this);
+        dialog.setMessage("Are you sure you want to delete this email?");
+
+        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Backendless.Persistence.of(Message.class).remove(message, new AsyncCallback<Long>() {
+                    @Override
+                    public void handleResponse(Long response) {
+                        MyApplication.messages.remove(index);
+
+                        Toast.makeText(
+                                EmailActivity.this,
+                                "Message deleted",
+                                Toast.LENGTH_SHORT).show();
+
+                        finish();
+                    }
+
+                    @Override
+                    public void handleFault(BackendlessFault fault) {
+                        Toast.makeText(
+                                EmailActivity.this,
+                                "Error: " + fault.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        dialog.show();
+    }
+
     public void getImage(String filename) {
         try {
             URL url = new URL(
@@ -304,6 +277,37 @@ public class EmailActivity extends AppCompatActivity {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.single_email, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_reply:
+                replyTo();
+                break;
+
+            case R.id.action_reply_all:
+                replyAll();
+                break;
+
+            case R.id.action_forward:
+                forwardMail();
+                break;
+
+            case R.id.action_delete:
+                deleteMail();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
 

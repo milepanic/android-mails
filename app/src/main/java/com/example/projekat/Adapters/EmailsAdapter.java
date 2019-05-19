@@ -42,15 +42,14 @@ public class EmailsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-//        View v = mInflater.inflate(R.layout.list_emails, null);
         convertView = inflater.inflate(R.layout.list_emails, null);
 
-//        ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
-        TextView header = (TextView) convertView.findViewById(R.id.subject);
-        TextView message = (TextView) convertView.findViewById(R.id.message);
-        TextView date = (TextView) convertView.findViewById(R.id.date);
+        TextView inital = convertView.findViewById(R.id.initial);
+        TextView header = convertView.findViewById(R.id.subject);
+        TextView message = convertView.findViewById(R.id.message);
+        TextView date = convertView.findViewById(R.id.date);
 
-//        imageView.setImageResource(SENDERS[position]);
+        inital.setText(messages.get(position).getFrom().toUpperCase().charAt(0) + "");
         header.setText(messages.get(position).getSubject());
         message.setText(messages.get(position).getContent());
         date.setText(DateFormat.getDateTimeInstance().format(messages.get(position).getDateTime()));

@@ -12,8 +12,9 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#235FB4"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
             android:elevation="4dp"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
@@ -22,18 +23,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/btnCancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00E9D6D6"
-                app:srcCompat="@android:drawable/ic_delete" />
+            <!--<ImageView-->
+                <!--android:id="@+id/btnCancel"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="#00E9D6D6"-->
+                <!--app:srcCompat="@android:drawable/ic_delete" />-->
 
-            <ImageView
-                android:id="@+id/btnReply"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/ic_menu_send" />
+            <!--<ImageView-->
+                <!--android:id="@+id/btnReply"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--app:srcCompat="@android:drawable/ic_menu_send" />-->
 
         </android.support.v7.widget.Toolbar>
 
@@ -46,7 +47,7 @@
             android:layout_marginEnd="16dp"
             android:ems="10"
             android:hint="To"
-            android:inputType="textPersonName"
+            android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar" />
@@ -60,7 +61,7 @@
             android:layout_marginEnd="16dp"
             android:ems="10"
             android:hint="Subject"
-            android:inputType="textPersonName"
+            android:inputType="textEmailSubject"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"

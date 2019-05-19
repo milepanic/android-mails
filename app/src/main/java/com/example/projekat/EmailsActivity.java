@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.backendless.Backendless;
@@ -61,6 +62,8 @@ public class EmailsActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        setDrawerInfo();
+
         prefs = getSharedPreferences(MyApplication.PREFERENCES, MODE_PRIVATE);
 
         listView = findViewById(R.id.listView);
@@ -91,6 +94,17 @@ public class EmailsActivity extends AppCompatActivity
             displayEmails();
             autoRefreshEmails();
         }
+    }
+
+    public void setDrawerInfo() {
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView navUsername = headerView.findViewById(R.id.nav_username);
+        TextView navEmail = headerView.findViewById(R.id.nav_email);
+
+        navUsername.setText(MyApplication.auth.getProperty("username").toString());
+        navEmail.setText(MyApplication.auth.getEmail());
     }
 
     public void displayEmails() {
