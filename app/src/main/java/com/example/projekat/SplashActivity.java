@@ -12,7 +12,7 @@ import java.net.InetAddress;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private final int SPLASH_DISPLAY_LENGTH = 0000; // treba 5000
+    private final int SPLASH_DISPLAY_LENGTH = 5000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
